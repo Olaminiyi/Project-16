@@ -1,92 +1,33 @@
-# Using Terraform IAC Tool Automate AWS Cloud Solution for 2 Company Websites - Part 1
+# Create an IAM user, name it terraform (ensure that the user has only programatic access to your AWS account) and grant this user AdministratorAccess permissions.
+    - go to IAM user > users > create user
+    ![alt text](images/16.1.png)
 
-In this project, I will be automating the AWS infrastructure for 2 websites that I manually created in Project-15 using Terraform.
+    - username : terraform
+    ![alt text](images/16.2.png)
 
-**BENEFITS:**
-
-The benefits of using Terraform in this Project include:
-
-- **Improved collaboration:** It allows teams to define and manage infrastructure using version control, which makes it easier for multiple people to collaborate and work on the same codebase. This can help improve collaboration and reduce the risk of errors - This is implemented in Project-18 and Project-19.
-
-- **Version history:** It automatically maintains a version history of your infrastructure, which makes it easy to roll back to previous versions if necessary. This can help protect against mistakes and ensure that you can recover from failures quickly..
-
-- **Consistency:** It allows you to define your infrastructure using a high-level configuration language, which means that you can specify the desired state of your infrastructure in a consistent and predictable way.
-
-- **Reusability:** It allows you to define infrastructure as modular components, which can be easily reused across multiple deployments. This can help reduce duplication and make it easier to manage your infrastructure at scale - This is implemented in Project-18.
-
-- **Portable across cloud providers:** It is portable across different cloud providers, which means that you can use the same tools and processes to manage your infrastructure regardless of where it is deployed.
-
-Overall, Terraform offers a number of benefits for managing infrastructure as code. It has become a mandatory tool to set up reproducible multi-cloud infrastructure.
-
-![alt text](images/tooling_project_16.png)
-
-
-**Prerequisites:**
-
-- AWS account;
-- AWS Identify and Access Management (IAM) credentials and programmatic access.
-- Set up AWS credentials locally with `aws configure` in the **AWS Command Line Interface (CLI)**. Click [here](https://github.com/dybran/AWS-Lift-and-Shift-Project/blob/main/AWS-Lift-and-Shift-Project.md)
-
-To write quality Terraform codes, we need to:
-
-- Understand the goal of the desired infrastructure.
-- Ability to effectively use up to date Terraform documentation. Click [here](https://registry.terraform.io/)
-
-The resources to be created include:
-
-- S3 buket
-- A VPC
-- 2 Public subnets
-
-### Create an IAM user
-
-Name it terraform (ensure that the user has only programatic access to your AWS account) and grant this user AdministratorAccess permissions.
-- go to IAM user > users > create user
-
-![alt text](images/16.1.png)
-
-- username : terraform
-
-![alt text](images/16.2.png)
-
-- give Admnistrator access > create user
- 
+    - give Admnistrator access > create user
  ![alt text](images/16.3.png)
- 
  ![alt text](images/16.4.png)
 
-- click on the new created user terraform from the user 
-
-![alt text](images/16.5.png)
+    - click on the new created user terraform from the user 
+ ![alt text](images/16.5.png)
+    - click on security credentials >  Command Line Interface (CLI) > create
+    ![alt text](images/16.6.png)
+    ![alt text](images/16.7.png)
+    ![alt text](images/16.8.png)
+    ![alt text](images/16.9.png)
     
-- click on security credentials >  Command Line Interface (CLI) > create
-
-![alt text](images/16.6.png)
+# The next thing is to configure our aws with security credentials we created
+- first make sure you have aws CLI install, if not download and install
+- go to the command promt
+    - aws config
+    - enter the Access key and Secret Access when prompted
+     ![alt text](images/19.10.png)
     
-![alt text](images/16.7.png)
-
-![alt text](images/16.8.png)
-
-![alt text](images/16.9.png)
-    
-### The next thing is to configure our aws with security credentials we created
-
-- first make sure you have aws CLI install, if not [download and install](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
-- go to the command prompt
-```
-aws config
-```
-- enter the Access key and Secret Access when prompted
-
-![alt text](images/19.10.png)
-    
-- check if the profile has been set by your configuration
-- type the command below on the command prompt
-```
-aws sts get-caller-identity
-```   
-
-![alt text](images/19.11.png)
+    - check if the profile has been set by your configuration
+        - type the command below on the command prompt
+        - aws sts get-caller-identity
+        ![alt text](images/19.11.png)
 
 
 # Create an S3 bucket to store Terraform state file.
@@ -473,4 +414,3 @@ preferred_number_of_public_subnets = 2
     13.4. wordpress.sh
     
 14. Elastic File system 
-
