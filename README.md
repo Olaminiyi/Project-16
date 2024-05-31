@@ -89,21 +89,28 @@ aws sts get-caller-identity
 ![alt text](images/19.11.png)
 
 
-# Create an S3 bucket to store Terraform state file.
-    - go to S3 > create bucket
-    - name: ola-dev-terraform-bucket
-    - region- chooose uk
-    ![alt text](images/19.12.png)
+### Create an S3 bucket to store Terraform state file.
+    
+- go to S3 > create bucket
+- name: ola-dev-terraform-bucket
+- region- chooose uk
 
-    - block all public asset by default
-    ![alt text](images/19.13.png)
+![alt text](images/19.12.png)
 
-    - bucket versioning : enabled
-    ![alt text](images/19.14.png)
-    - create
-    ![alt text](images/19.15.png)
+- block all public asset by default
 
-    - check the S3 bucket you created from console :aws s3 ls
+![alt text](images/19.13.png)
+
+- bucket versioning : enabled
+
+![alt text](images/19.14.png)
+
+- create
+
+![alt text](images/19.15.png)
+
+- check the S3 bucket you created from console :aws s3 ls
+
 ![alt text](images/19.16.png)
 
 # creating VPC|SUBNETS|SECURITY GROUP
