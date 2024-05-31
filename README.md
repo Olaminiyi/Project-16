@@ -203,103 +203,106 @@ resource "aws_subnet" "public2" {
 
 ### Fixing The Problems By Code Refactoring
 
-Fixing Hard Coded Values: We will introduce variables, and remove hard coding.
-o Starting with the provider block, declare a variable named region, give it a default value, and update
-the provider section by referring to the declared variable. 
-
-    variable "region" {
+Fixing Hard Coded Values: We will introduce variables, and remove hard coding.Starting with the provider block, declare a variable named region, give it a default value, and update the provider section by referring to the declared variable. 
+```
+variable "region" {
         default = "eu-west-2"
-    }
+}
 
-    provider "aws" {
-        region = var.region
-    }
-
+provider "aws" {
+    region = var.region
+}
+```
 Do the same to cidr value in the vpc block, and all the other arguments.
-  
-
-    variable "vpc_cidr" {
-        default = "172.16.0.0/16"
+ ``` 
+variable "vpc_cidr" {
+  default = "172.16.0.0/16"
     }
 
-    variable "enable_dns_support" {
-        default = "true"
-    }
+ variable "enable_dns_support" {
+      default = "true"
+}
 
-    variable "enable_dns_hostnames" {
+variable "enable_dns_hostnames" {
         default ="true" 
-    }
+}
+```
 ![alt text](images/19.29.png)
    
 
-
-# Fixing multiple resource blocks: This is where things become a little tricky. It’s not complex, we are just
-going to introduce some interesting concepts. Loops & Data sources
-- Let us fetch Availability zones from AWS, and replace the hard coded value in the subnet’s availability_zone section.
-
+Fixing multiple resource blocks: This is where things become a little tricky. It’s not complex, we are just
+going to introduce some interesting concepts. Loops & Data sources. Let us fetch `Availability zones` from `AWS`, and replace the hard coded value in the `subnet’s availability_zone` section.
+```
 # Get list of availability zones
 data "aws_availability_zones" "available" {
     state = "available"
 }
+```
 ![alt text](images/19.30.png)
 
-# To make use of this new data resource, we will need to introduce a count argument in the subnet block: Something like this.
+To make use of this new data resource, we will need to introduce a count argument in the subnet block: Something like this.
+```
 # Create public subnet1
 resource "aws_subnet" "public" { 
-    count                   = 2
-    vpc_id                  = aws_vpc.main.id
-    cidr_block              = "172.16.1.0/24"
-    map_public_ip_on_launch = true
-    availability_zone       = data.aws_availability_zones.available.names[count.index]
+count                   = 2
+vpc_id                  = aws_vpc.main.id
+cidr_block              = "172.16.1.0/24"
+map_public_ip_on_launch = true
+availability_zone       = data.aws_availability_zones.available.names[count.index]
 
 }
+```
+
 ![alt text](images/19.31.png)
 
-# But we still have a problem. If we run Terraform with this configuration, it may succeed for the first time, but by the time it goes into the second loop, it will fail because we still have cidr_block hard coded. The same cidr_block cannot be created twice within the same VPC. So, we have a little more work to do.
-  # Create public subnet1
-  # Its parameters are cidrsubnet(prefix, newbits, netnum)
+But we still have a problem. If we run Terraform with this configuration, it may succeed for the first time, but by the time it goes into the second loop, it will fail because we still have cidr_block hard coded. The same cidr_block cannot be created twice within the same VPC. So, we have a little more work to do.
+- Create public subnet1
+- It's parameters are cidrsubnet(prefix, newbits, netnum)
 
 - The prefix parameter must be given in CIDR notation, same as for VPC.
 - The newbits parameter is the number of additional bits with which to extend the prefix. For example, if given a prefix ending with /16 and a newbits value of 4, the resulting subnet address will have length /20
 - The netnum parameter is a whole number that can be represented as a binary integer with no more than newbits binary digits, which will be used to populate the additional bits added to the prefix
-
-  resource "aws_subnet" "public" { 
-      count                   = 2
-      vpc_id                  = aws_vpc.main.id
-      cidr_block              = cidrsubnet(var.vpc_cidr, 4 , count.index)
-      map_public_ip_on_launch = true
-      availability_zone       = data.aws_availability_zones.available.names[count.index]
+```
+resource "aws_subnet" "public" { 
+count                   = 2
+vpc_id                  = aws_vpc.main.id
+cidr_block              = cidrsubnet(var.vpc_cidr, 4 , count.index)
+map_public_ip_on_launch = true
+availability_zone       = data.aws_availability_zones.available.names[count.index]
 
   }
+```
 
-  ![alt text](images/19.32.png)
+![alt text](images/19.32.png)
 
-# The final problem to solve is removing hard coded count value.
-If we cannot hard code a value we want, then we will need a way to dynamically provide the value based on some input. Since the data resource returns all the AZs within a region, it makes sense to count the number of AZs returned and pass that number to the count argument.
-To do this, we can introuduce length() function, which basically determines the length of a given list, map, or string.
-Since data.aws_availability_zones.available.names returns a list like ["eu-central-1a", "eu-central-1b", "eu-central- 1c"] we can pass it into a lenght function and get number of the AZs.
-length(["eu-central-1a", "eu-central-1b", "eu-central-1c"])
-
+### The final problem to solve is removing hard coded count value.
+If we cannot hard code a value we want, then we will need a way to dynamically provide the value based on some input. Since the data resource returns all the `AZs` within a `region`, it makes sense to count the number of `AZs` returned and pass that number to the `count` argument.
+To do this, we can introuduce `length() function`, which basically determines the `length` of a given `list`, `map`, or `string`.
+Since `data.aws_availability_zones.available.names` returns a list like ***["eu-central-1a", "eu-central-1b", "eu-central- 1c"]** we can pass it into a `lenght function` and get number of the `AZs`.
+**length(["eu-central-1a", "eu-central-1b", "eu-central-1c"])**
+```
 # Create public subnet1
 resource "aws_subnet" "public" { 
-    count                   = length(data.aws_availability_zones.available.names)
-    vpc_id                  = aws_vpc.main.id
-    cidr_block              = cidrsubnet(var.vpc_cidr, 4 , count.index)
-    map_public_ip_on_launch = true
-    availability_zone       = data.aws_availability_zones.available.names[count.index]
+count                   = length(data.aws_availability_zones.available.names)
+vpc_id                  = aws_vpc.main.id
+cidr_block              = cidrsubnet(var.vpc_cidr, 4 , count.index)
+map_public_ip_on_launch = true
+availability_zone       = data.aws_availability_zones.available.names[count.index]
 
 }
+```
+
 ![alt text](images/19.33.png)
 
-# Observations:
+> [!NOTE]
+> What we have now, is sufficient to create the subnet resource required. But if you observe, it is not satisfying our business requirement of just 2 subnets. The length function will return number 3 to the count argument, but what we actually need is 2. Now, let us fix this.
 
-What we have now, is sufficient to create the subnet resource required. But if you observe, it is not satisfying our business requirement of just 2 subnets. The length function will return number 3 to the count argument, but what we actually need is 2. Now, let us fix this.
-
-Declare a variable to store the desired number of public subnets, and set the default value
-
+- Declare a variable to store the desired number of public subnets, and set the default value
+```
 variable "preferred_number_of_public_subnets" {
   default = 2
 }
+```
 
 ![alt text](images/19.34.png)
 
