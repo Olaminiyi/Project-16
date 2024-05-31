@@ -113,22 +113,26 @@ aws sts get-caller-identity
 
 ![alt text](images/19.16.png)
 
-# creating VPC|SUBNETS|SECURITY GROUP
+### creating VPC|SUBNETS|SECURITY GROUP
 
 - create a directory and name it PLB
 - create a file in it and named it main.tf
+
 ![alt text](images/19.17.png)
 
-# Provider and VPC resource section
-    - Add AWS as a provider, and a resource to create a VPC in the main.tf file.
-    - Provider block informs Terraform that we intend to build infrastructure within AWS.
-    - Resource block will create a VPC.
+### Provider and VPC resource section
+- Add AWS as a provider, and a resource to create a VPC in the main.tf file.
+- Provider block informs Terraform that we intend to build infrastructure within AWS.
+- Resource block will create a VPC.
 
 - paste the following code in your terraform maint.tf
+```
 provider "aws" {
 region = "eu-west-2"
     }
+```
 # Create VPC
+```
 resource "aws_vpc" "main" {
 cidr_block = "172.16.0.0/16"
 enable_dns_support = "true"
@@ -136,28 +140,32 @@ enable_dns_hostnames = "true"
 enable_classiclink = "true" 
 enable_classiclink_dns_support = "false"
 }
+```
 
 ![alt text](images/19.22.png)
 
 - change to PBL directory and run terraform init
+
 ![alt text](images/19.18.png)
 
 - terraform plan > terraform apply
+
 ![alt text](images/19.19.png)
+
 ![alt text](images/19.20.png)
 
-# go to the aws console and check if the VPC has been created 
+- go to the aws console and check if the VPC has been created 
+
 ![alt text](images/19.21.png)
 
-# Subnets resource section
+### Subnets resource section
+
 According to our architectural design, we require 6 subnets:
 - 2 public
 - 2 private for webservers
 - 2 private for data layer
-Let us create the first 2 public subnets.
-Add below configuration to the main.tf file:
-
-
+Let us create the first 2 public subnets. Add below configuration to the main.tf file:
+```
 # Create public subnets1
 resource "aws_subnet" "public1" { 
     vpc_id = aws_vpc.main.id 
@@ -172,22 +180,28 @@ resource "aws_subnet" "public2" {
     map_public_ip_on_launch = true 
     availability_zone = "eu-west-2b"
 }
+```
 
 ![alt text](images/19.23.png)
 
 - run terraform fmt to format the code (arrange)
 - run terrraform plan and apply
+
 ![alt text](images/19.24.png)
+
 ![alt text](images/19.25.png)
 
 - go to the aws console and check if the subnet were created successfully
+
 ![alt text](images/19.26.png)
+
 ![alt text](images/19.27.png)
 
 - Destroy the resources using: terraform destroy
+
  ![alt text](images/19.28.png)
 
-# Fixing The Problems By Code Refactoring
+### Fixing The Problems By Code Refactoring
 
 Fixing Hard Coded Values: We will introduce variables, and remove hard coding.
 o Starting with the provider block, declare a variable named region, give it a default value, and update
