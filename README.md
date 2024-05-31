@@ -306,14 +306,16 @@ variable "preferred_number_of_public_subnets" {
 
 ![alt text](images/19.34.png)
 
-# Next, update the count argument with a condition. Terraform needs to check first if there is a desired number of subnets. Otherwise, use the data returned by the lenght function. See how that is presented below.
-# we will ternary operator to solve this : it works this way
-    - if the sentence is correct; use the first answer that follows the ? signs
-    - if the sentence is not correct; use the answer that follows the semi colon sign(:)
-    - and since our var.preferred_number_of_public_subnets :==(not equal to) null
-    - the count wil take the number of our default preferred_number_of_public_subnets which is equal to 2 and pass it as the length of returned data.aws_availability_zones.available.names
+Next, update the `count` argument with a condition. Terraform needs to check first if there is a desired `number of subnets`. Otherwise, use the data returned by the l`enght function`. See how that is presented below.
 
+> [!IMPORTANT] 
+> we will ternary operator to solve this : it works this way
+- if the sentence is correct; use the first answer that follows the ? signs
+- if the sentence is not correct; use the answer that follows the semi colon sign(:)
+- and since our var.preferred_number_of_public_subnets :==(not equal to) null
+- the count wil take the number of our default preferred_number_of_public_subnets which is equal to 2 and pass it as the length of returned data.aws_availability_zones.available.names
 
+```
 # Create public subnets
 resource "aws_subnet" "public" {
   count  = var.preferred_number_of_public_subnets == null ? length(data.aws_availability_zones.available.names) : var.preferred_number_of_public_subnets   
@@ -323,10 +325,13 @@ resource "aws_subnet" "public" {
   availability_zone       = data.aws_availability_zones.available.names[count.index]
 
 }
+```
+
 ![alt text](images/19.35.png)
 
-=========================================================================================
-# Now the entire configuration should now look like this
+
+### Now the entire configuration should now look like this
+```
 # Get list of availability zones
 data "aws_availability_zones" "available" {
 state = "available"
@@ -374,29 +379,35 @@ resource "aws_subnet" "public" {
   availability_zone       = data.aws_availability_zones.available.names[count.index]
 
 }
+```
 
 ![alt text](images/19.36.png)
 
- - Run terraform fmt, init, plan and apply
+- Run terraform fmt, init, plan and apply
 
 ![alt text](images/19.37.png)
+
 ![alt text](images/19.38.png)
 
 - check the aws console if the resources were created sucessfully
+
 ![alt text](images/19.39.png)
+
 ![alt text](images/19.40.png)
 
-=============================================================================================================
 
-# Introducing variables.tf & terraform.tfvars
+
+### Introducing variables.tf & terraform.tfvars
+
 - We will put all variable declarations in a separate file and provide non default values to each of them
-    - Create a new file and name it variables.tf
-    - Copy all the variable declarations into the new file.
-    - Create another file, name it terraform.tfvars
-    - Set values for each of the variables in the terraform.tfvars
+- Create a new file and name it variables.tf
+- Copy all the variable declarations into the new file.
+- Create another file, name it terraform.tfvars
+- Set values for each of the variables in the terraform.tfvars
 
-# Maint.tf
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+### The Maint.tf file looks like this
+```
 # Get list of availability zones
 data "aws_availability_zones" "available" {
 state = "available"
@@ -425,11 +436,13 @@ resource "aws_subnet" "public" {
   availability_zone       = data.aws_availability_zones.available.names[count.index]
   
 }
+```
+
 ![alt text](images/19.43.png)
 
 
-# variables.tf
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+### The variables.tf file looks like this
+```
 variable "region" {
       default = "us-west-2"
 }
@@ -450,11 +463,12 @@ variable "enable_dns_hostnames" {
     type        = number
     description = "Number of private subnets"
 }
+```
 
 ![alt text](images/19.42.png)
 
-# terraform.tfvars
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+### The terraform.tfvars files looks like this
+```
 region = "us-west-2"
 
 vpc_cidr = "172.16.0.0/16" 
@@ -464,16 +478,21 @@ enable_dns_support = "true"
 enable_dns_hostnames = "true"  
 
 preferred_number_of_public_subnets = 2
+```
 
 ![alt text](images/19.41.png)
 
 - check the aws console to see if the resources were created sucessfully
+
 ![alt text](images/19.39.png)
+
 ![alt text](images/19.40.png)
 
-# you can use terraform apply --auto-approve if you don't want to be typing yes 
+> [!NOTE]
+> you can use `terraform apply --auto-approve` if you don't want to be typing yes. 
 
 
+### Order of creation for this project till project 19
 1. VPC
 2. Subnets
 3. internet gateway
@@ -491,10 +510,9 @@ preferred_number_of_public_subnets = 2
 11. IaM and Roles (Create AssumeRole)
 12. create Launch template (must be existing before Auto G) and
 13. Autoscaling group
-    13.1. bastion.sh
-    13.2. nginx.sh
-    13.3. tooling.sh
-    13.4. wordpress.sh
-    
+    - 13.1. bastion.sh
+    - 13.2. nginx.sh
+    - 13.3. tooling.sh
+    - 13.4. wordpress.sh 
 14. Elastic File system 
 
