@@ -487,7 +487,10 @@ preferred_number_of_public_subnets = 2
 ![alt text](images/19.40.png)
 
 > [!NOTE]
-> you can use `terraform apply --auto-approve` if you don't want to be typing yes. 
+> you can use `terraform apply --auto-approve` if you don't want to be typing yes.
+
+
+**This is the [link](https://github.com/Olaminiyi/Project-19) to the completed version of this Project which is Project 19**
 
 
 ### Order of creation for this project till project 19
