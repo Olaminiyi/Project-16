@@ -304,10 +304,10 @@ variable "preferred_number_of_public_subnets" {
 
 ![alt text](images/19.34.png)
 
-Next, update the `count` argument with a condition. Terraform needs to check first if there is a desired `number of subnets`. Otherwise, use the data returned by the l`enght function`. See how that is presented below.
+Next, update the `count` argument with a condition. Terraform needs to check first if there is a desired `number of subnets`. Otherwise, use the data returned by the `lenght function`. See how that is presented below.
 
 > [!IMPORTANT] 
-> we will ternary operator to solve this : it works this way
+> we will use a ternary operator to solve this : it works this way
 - if the sentence is correct; use the first answer that follows the ? signs
 - if the sentence is not correct; use the answer that follows the semi colon sign(:)
 - and since our var.preferred_number_of_public_subnets :==(not equal to) null
