@@ -152,7 +152,7 @@ enable_dns_hostnames = "true"
 
 ![alt text](images/19.20.png)
 
-- go to the aws console and check if the VPC has been created 
+- go to the aws console and check if the VPC has been created.
 
 ![alt text](images/19.21.png)
 
