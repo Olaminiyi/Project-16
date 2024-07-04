@@ -1,5 +1,5 @@
 # Create an IAM user, name it terraform (ensure that the user has only programatic access to your AWS account) and grant this user AdministratorAccess permissions.
-    - go to IAM user > users > create user
+    - go to IAM user > users > create user.
     ![alt text](images/16.1.png)
 
     - username : terraform
