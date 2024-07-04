@@ -44,7 +44,7 @@
     - create
     ![alt text](images/19.15.png)
 
-    - check the S3 bucket you created from console :aws s3 ls
+    - check the S3 bucket you created from console :aws s3 ls.
 ![alt text](images/19.16.png)
 
 # creating VPC|SUBNETS|SECURITY GROUP
